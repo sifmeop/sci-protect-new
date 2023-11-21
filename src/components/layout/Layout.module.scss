@@ -1,0 +1,4 @@
+.layout {
+  @apply grid h-full;
+  grid-template-rows: auto 1fr auto;
+}
