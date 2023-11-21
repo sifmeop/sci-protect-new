@@ -8,6 +8,7 @@ import { ErrorMessage } from 'ui/AuthForm/ErrorMessage'
 import Web3 from 'web3'
 import { RegisteredSubscription } from 'web3-eth'
 import * as yup from 'yup'
+import UploadWorkContract from './upload-work.contract.json'
 
 const contractAddress = '0xa24d2C66c337b5D26355De4d6e2a512A7D423075'
 
@@ -51,11 +52,8 @@ interface UploadForm {
 }
 
 const licenseOptions = [
-  { label: 'Відкритий доступ', value: 'Відкритий доступ' },
-  { label: 'Ліцензія на читання', value: 'Ліцензія на читання' },
-  { label: 'Ліцензія на завантаження', value: 'Ліцензія на завантаження' },
-  { label: 'Ліцензія на комерційне використання', value: 'Ліцензія на комерційне використання' },
-  { label: 'Ексклюзивна ліцензія', value: 'Ексклюзивна ліцензія' }
+  { label: 'Відкрита', value: 'OPEN' },
+  { label: 'Закрита', value: 'CLOSED' }
 ]
 
 const schema = yup.object().shape({
@@ -78,31 +76,28 @@ export const UploadWork = () => {
 
   const onSubmit: SubmitHandler<UploadForm> = async (data) => {
     console.debug(data)
-    // init()
+    init()
 
-    // if (!web3 || !selectedAccount) return
+    if (!web3 || !selectedAccount) return
 
-    // const contract = new web3.eth.Contract(UploadWorkContract.abi, contractAddress)
+    const contract = new web3.eth.Contract(UploadWorkContract.abi, contractAddress)
 
-    // const workHash = '0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234'
-    // const metadata = {
-    //   ...data,
-    //   licence: data.licence.value,
-    //   tags: data.tags.map((tag) => tag.value)
-    // }
-    // const licenseType = 1 // Замените на нужное значение
+    const workHash = '0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234'
+    const metadata = {
+      ...data,
+      licence: data.licence.value,
+      tags: data.tags.map((tag) => tag.value),
+      asdasd: 'asdasd'
+    }
+    const licenseType = data.licence.value === 'OPEN' ? 0 : 1
 
-    // contract.methods
-    //   .registerWork()
-    //   .send({ from: selectedAccount })
-    //   .on('transactionHash', (hash) => {
-    //     console.log('Transaction Hash: ', hash)
-    //   })
-    //   // .on('confirmation', (confirmationNumber, receipt) => {
-    //   //   console.log('Confirmation Number: ', confirmationNumber)
-    //   //   console.log('Receipt: ', receipt)
-    //   // })
-    //   .on('error', console.error)
+    contract.methods
+      .registerWork(workHash, JSON.stringify(metadata), licenseType)
+      .send({ from: selectedAccount })
+      .on('transactionHash', (hash) => {
+        console.log('Transaction Hash: ', hash)
+      })
+      .on('error', console.error)
   }
 
   return (
@@ -164,6 +159,35 @@ export const UploadWork = () => {
           Upload
         </Button>
       </form>
+      <Button
+        sx={{ width: '100%', maxWidth: '200px' }}
+        variant='outlined'
+        onClick={() => {
+          // 0x400079a11e8d171013b345fa3f45a0f33d4a58788666b99dff921da60a5fa1e6
+          init()
+
+          if (!web3 || !selectedAccount) return
+
+          const contract = new web3.eth.Contract(UploadWorkContract.abi, contractAddress)
+          contract.methods
+            .getWork('0x400079a11e8d171013b345fa3f45a0f33d4a58788666b99dff921da60a5fa1e6')
+            .send({ from: selectedAccount })
+            .on('transactionHash', (hash, receipt) => {
+              console.log('Transaction Hash: ', hash, receipt)
+            })
+            .on('receipt', (receipt) => {
+              console.log('Transaction Hash: ', receipt)
+            })
+            .on('sending', (hash) => {
+              console.log('Transaction Hash: ', hash)
+            })
+            .on('sent', (hash) => {
+              console.log('Transaction Hash: ', hash)
+            })
+            .on('error', console.error)
+        }}>
+        get work
+      </Button>
     </div>
   )
 }
