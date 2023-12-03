@@ -76,40 +76,55 @@ export const useUploadWork = () => {
 
   const onSubmit: SubmitHandler<UploadForm> = async (data) => {
     console.debug(data)
+
+    if (file?.type !== 'application/pdf') {
+      toast.error('Тільки PDF файли можна завантажувати')
+      return
+    }
+
     init()
 
     if (!web3 || !selectedAccount) return
 
     const contract = new web3.eth.Contract(UploadWorkContract.abi, contractAddress)
 
-    console.debug(file, 'file')
     const workHash = await generateFileHash(file!)
     console.debug(workHash, 'workHash')
+    const formData = new FormData()
+    formData.append('file', file!)
+    formData.append('title', data.title)
+    formData.append('description', data.description)
+    data.tags.map((tag) => {
+      formData.append('tags', tag.value)
+    })
+    formData.append('price', data.price.toString())
+    formData.append('licence', data.licence.value)
+
     const metadata = {
       ...data,
+      price: data.price.toString(),
       licence: data.licence.value,
-      tags: data.tags.map((tag) => tag.value)
+      tags: data.tags.map((tag) => tag.value),
+      file: formData
     }
+
     const licenseType = data.licence.value === 'OPEN' ? 0 : 1
 
     contract.methods
       // @ts-expect-error
-      .registerWork(JSON.stringify(workHash), JSON.stringify(metadata), licenseType)
+      .registerWork('0x' + workHash, JSON.stringify(metadata), licenseType)
       .send({ from: selectedAccount })
       .on('transactionHash', (hash) => {
         console.log('Transaction Hash: ', hash)
         try {
-          try {
-            addWorkMutation({ ...metadata, txId: hash })
-              .unwrap()
-              .then(() => {
-                toast.success('Робота додана')
-              })
-          } catch (error) {
-            console.debug('Error adding work: ', error)
-            toast.error('Не вдалося завантажити роботу')
-          }
+          formData.append('txId', hash)
+          addWorkMutation(formData)
+            .unwrap()
+            .then(() => {
+              toast.success('Робота додана')
+            })
         } catch (error) {
+          console.debug('Error adding work: ', error)
           toast.error('Не вдалося завантажити роботу')
         }
       })

@@ -23,15 +23,21 @@ export interface AddWork {
   licence: string
 }
 
+export interface IWork {
+  description: string
+  hash: string
+  id: number
+  license_type: string
+  price: string
+  tags: string[]
+  title: string
+  user_info: { firstName: string; lastName: string; userId: number }
+}
+
 export const apiSci = createApi({
   reducerPath: 'apiSci',
   baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    mode: 'no-cors',
-    prepareHeaders: (headers) => {
-      headers.set('Access-Control-Allow-Origin', '*')
-      return headers
-    }
+    baseUrl: API_URL
   }),
   endpoints: (build) => ({
     signUp: build.mutation({
@@ -55,13 +61,18 @@ export const apiSci = createApi({
         body
       })
     }),
-    search: build.query({
-      query: (text: string) => ({
+    search: build.query<IWork[], string>({
+      query: (text) => ({
         url: '/documents/search',
         params: { text }
+      })
+    }),
+    getDocument: build.query<any, string>({
+      query: (id) => ({
+        url: `/documents/${id}`
       })
     })
   })
 })
 
-export const { useSignInMutation, useSignUpMutation, useSearchQuery, useAddWorkMutation } = apiSci
+export const { useSignInMutation, useGetDocumentQuery, useSignUpMutation, useSearchQuery, useAddWorkMutation } = apiSci

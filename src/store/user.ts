@@ -1,18 +1,26 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
-export interface InitialStateUser {
-  wallet: string | null
+export interface IUser {
+  email: string
+  firstName: string
+  lastName: string
 }
 
-const initialState: InitialStateUser | null = null
+export interface InitialStateUser {
+  user: IUser | null
+}
+
+const initialState: InitialStateUser = {
+  user: null
+}
 
 const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<string>) => {
-      // state.wallet = action.payload
+    setUser: (state, action: PayloadAction<IUser>) => {
+      state.user = action.payload
     }
   }
 })
