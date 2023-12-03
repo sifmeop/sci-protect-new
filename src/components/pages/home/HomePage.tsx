@@ -26,7 +26,7 @@ export const HomePage = () => {
       {!isLoading && isSuccess && data && data.length > 0 && (
         <div className='flex flex-col gap-4'>
           {data.map((work, index) => (
-            <SearchItem {...work} index={index + 1} />
+            <SearchItem key={work.id} {...work} index={index + 1} />
           ))}
         </div>
       )}

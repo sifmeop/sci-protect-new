@@ -1,6 +1,6 @@
 import { SignInBody, useSignInMutation } from 'api'
 import { useNavigate } from 'react-router-dom'
-import { IUser, userActions } from 'store/user'
+import { userActions } from 'store/user'
 import { useAppDispatch } from './redux'
 
 export const useSignIn = () => {
@@ -11,11 +11,11 @@ export const useSignIn = () => {
   const handleSignIn = async (data: SignInBody) => {
     try {
       const response = await mutate(data)
-      console.debug(response, 'response')
-      const userData = { ...response, email: data.email }
-      delete userData.token as any
-      dispatch(userActions.setUser(userData as IUser))
-      navigate('/')
+      if ('data' in response) {
+        localStorage.setItem('token', response.data.token)
+        dispatch(userActions.setUser(response.data.user))
+        navigate('/')
+      }
     } catch (error) {
       console.log('Error sign up', error)
     }

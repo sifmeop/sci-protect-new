@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { IUser } from 'store/user'
 import { API_URL } from 'utils/constants'
 
 export interface SignUpBody {
@@ -34,21 +35,26 @@ export interface IWork {
   user_info: { firstName: string; lastName: string; userId: number }
 }
 
+export interface SignInResponse {
+  token: string
+  user: IUser
+}
+
 export const apiSci = createApi({
   reducerPath: 'apiSci',
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL
   }),
   endpoints: (build) => ({
-    signUp: build.mutation({
+    signUp: build.mutation<SignInResponse, SignUpBody>({
       query: (body: SignUpBody) => ({
         url: '/auth/register',
         method: 'POST',
         body
       })
     }),
-    signIn: build.mutation({
-      query: (body: SignInBody) => ({
+    signIn: build.mutation<SignInResponse, SignInBody>({
+      query: (body) => ({
         url: '/auth/login',
         method: 'POST',
         body

@@ -1,11 +1,13 @@
-import { useAppSelector } from 'hooks/redux'
-import { Navigate } from 'react-router-dom'
+import { Button } from '@mui/material'
+import { useAppDispatch, useAppSelector } from 'hooks/redux'
+import { userActions } from 'store/user'
 
 export const Cabinet = () => {
-  const { user } = useAppSelector((state) => state.user)
+  const user = useAppSelector((state) => state.user)
+  const dispatch = useAppDispatch()
 
-  if (!user) {
-    return <Navigate to='/auth/sign-in' />
+  const logout = () => {
+    dispatch(userActions.logout())
   }
 
   return (
@@ -16,6 +18,9 @@ export const Cabinet = () => {
           Ім'я: {user.firstName} {user.lastName}
         </div>
         <div>Електронна пошта: {user.email}</div>
+        <Button onClick={logout} variant='contained'>
+          Вийти
+        </Button>
       </div>
     </div>
   )

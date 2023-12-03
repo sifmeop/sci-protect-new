@@ -7,21 +7,16 @@ export interface IUser {
   lastName: string
 }
 
-export interface InitialStateUser {
-  user: IUser | null
-}
+export type UserState = IUser | null
 
-const initialState: InitialStateUser = {
-  user: null
-}
+const initialState = null as UserState
 
 const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<IUser>) => {
-      state.user = action.payload
-    }
+    setUser: (_, action: PayloadAction<IUser>) => action.payload,
+    logout: () => null
   }
 })
 

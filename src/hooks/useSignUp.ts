@@ -1,6 +1,6 @@
 import { SignUpBody, useSignUpMutation } from 'api'
 import { useNavigate } from 'react-router-dom'
-import { IUser, userActions } from 'store/user'
+import { userActions } from 'store/user'
 import { useAppDispatch } from './redux'
 
 export const useSignUp = () => {
@@ -11,10 +11,11 @@ export const useSignUp = () => {
   const handleSignUp = async (data: SignUpBody) => {
     try {
       const response = await mutate(data)
-      console.debug(response, 'response')
-      const userData = { ...data } as Partial<SignUpBody>
-      delete userData.password
-      dispatch(userActions.setUser(userData as IUser))
+      if ('data' in response) {
+        localStorage.setItem('token', response.data.token)
+        dispatch(userActions.setUser(response.data.user))
+        navigate('/')
+      }
       navigate('/')
     } catch (error) {
       console.log('Error sign up', error)
