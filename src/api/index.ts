@@ -27,7 +27,11 @@ export const apiSci = createApi({
   reducerPath: 'apiSci',
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
-    credentials: 'same-origin'
+    mode: 'no-cors',
+    prepareHeaders: (headers) => {
+      headers.set('Access-Control-Allow-Origin', '*')
+      return headers
+    }
   }),
   endpoints: (build) => ({
     signUp: build.mutation({
@@ -45,13 +49,19 @@ export const apiSci = createApi({
       })
     }),
     addWork: build.mutation({
-      query: (body: AddWork) => ({
+      query: (body: any) => ({
         url: '/documents',
         method: 'POST',
         body
+      })
+    }),
+    search: build.query({
+      query: (text: string) => ({
+        url: '/documents/search',
+        params: { text }
       })
     })
   })
 })
 
-export const { useSignInMutation, useSignUpMutation } = apiSci
+export const { useSignInMutation, useSignUpMutation, useSearchQuery, useAddWorkMutation } = apiSci

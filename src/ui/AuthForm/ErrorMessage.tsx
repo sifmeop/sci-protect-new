@@ -1,8 +1,8 @@
 import { FormHelperText } from '@mui/material'
-import { FieldError, FieldValues, Merge, UseControllerProps } from 'react-hook-form'
+import { FieldValues, UseControllerProps } from 'react-hook-form'
 
 interface Props<T extends FieldValues> extends UseControllerProps<T> {
-  errors: FieldError | undefined | Merge<FieldError, (FieldError | undefined)[]>
+  errors: any
 }
 
 export const ErrorMessage = <T extends FieldValues>({ errors }: Props<T>) => {

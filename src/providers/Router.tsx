@@ -1,10 +1,11 @@
 import { Layout } from 'components/layout/Layout'
+import { Cabinet } from 'components/pages/cabinet/Cabinet'
 import { HomePage } from 'components/pages/home/HomePage'
 import { NotFoundPage } from 'components/pages/not-found/NotFoundPage'
-import { SearchPage } from 'components/pages/search/SearchPage'
 import SignInPage from 'components/pages/sign-in/SignInPage'
 import SignUpPage from 'components/pages/sign-up/SignUpPage'
 import { UploadWork } from 'components/pages/upload-work/UploadWork'
+import { Work } from 'components/pages/work/Work'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -17,12 +18,16 @@ const router = createBrowserRouter([
         index: true
       },
       {
-        path: 'search',
-        element: <SearchPage />
+        path: 'cabinet',
+        element: <Cabinet />
       },
       {
         path: 'upload-work',
         element: <UploadWork />
+      },
+      {
+        path: 'work/:id',
+        element: <Work />
       }
     ]
   },
