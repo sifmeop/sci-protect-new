@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useAddWorkMutation } from 'api/index'
+import { useAddWorkMutation, useLazyIsUniqueDocQuery } from 'api/index'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -62,6 +62,7 @@ const uploadFormSchema = yup.object({
 
 export const useUploadWork = () => {
   const [file, setFile] = useState<File | null>(null)
+  const [checkIsUnique] = useLazyIsUniqueDocQuery()
 
   const {
     register,
@@ -90,45 +91,51 @@ export const useUploadWork = () => {
 
     const workHash = await generateFileHash(file!)
     console.debug(workHash, 'workHash')
-    const formData = new FormData()
-    formData.append('file', file!)
-    formData.append('title', data.title)
-    formData.append('description', data.description)
-    data.tags.map((tag) => {
-      formData.append('tags', tag.value)
-    })
-    formData.append('price', data.price.toString())
-    formData.append('licence', data.licence.value)
-
-    const metadata = {
-      ...data,
-      price: data.price.toString(),
-      licence: data.licence.value,
-      tags: data.tags.map((tag) => tag.value),
-      file: formData
-    }
-
-    const licenseType = data.licence.value === 'OPEN' ? 0 : 1
-
-    contract.methods
-      // @ts-expect-error
-      .registerWork('0x' + workHash, JSON.stringify(metadata), licenseType)
-      .send({ from: selectedAccount })
-      .on('transactionHash', (hash) => {
-        console.log('Transaction Hash: ', hash)
-        try {
-          formData.append('txId', hash)
-          addWorkMutation(formData)
-            .unwrap()
-            .then(() => {
-              toast.success('Робота додана')
-            })
-        } catch (error) {
-          console.debug('Error adding work: ', error)
-          toast.error('Не вдалося завантажити роботу')
-        }
+    try {
+      await checkIsUnique(workHash as string).unwrap()
+      const formData = new FormData()
+      formData.append('file', file!)
+      formData.append('title', data.title)
+      formData.append('description', data.description)
+      data.tags.map((tag) => {
+        formData.append('tags', tag.value)
       })
-      .on('error', console.error)
+      formData.append('price', data.price.toString())
+      formData.append('licence', data.licence.value)
+
+      const metadata = {
+        ...data,
+        price: data.price.toString(),
+        licence: data.licence.value,
+        tags: data.tags.map((tag) => tag.value),
+        file: formData
+      }
+
+      const licenseType = data.licence.value === 'OPEN' ? 0 : 1
+
+      contract.methods
+        // @ts-expect-error
+        .registerWork('0x' + workHash, JSON.stringify(metadata), licenseType)
+        .send({ from: selectedAccount })
+        .on('transactionHash', (hash) => {
+          console.log('Transaction Hash: ', hash)
+          try {
+            formData.append('txId', hash)
+            addWorkMutation(formData)
+              .unwrap()
+              .then(() => {
+                toast.success('Робота додана')
+              })
+          } catch (error) {
+            console.debug('Error adding work: ', error)
+            toast.error('Не вдалося завантажити роботу')
+          }
+        })
+        .on('error', console.error)
+    } catch (e) {
+      toast.error('Така робота вже існує')
+      return
+    }
   }
 
   return { register, handleSubmit, control, errors, onSubmit, file, setFile }

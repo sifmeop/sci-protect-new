@@ -1,22 +1,15 @@
 import { SignUpBody, useSignUpMutation } from 'api'
-import { useNavigate } from 'react-router-dom'
-import { userActions } from 'store/user'
-import { useAppDispatch } from './redux'
+import { useSignIn } from './useSignIn'
 
 export const useSignUp = () => {
   const [mutate] = useSignUpMutation()
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const { handleSignIn } = useSignIn()
 
   const handleSignUp = async (data: SignUpBody) => {
     try {
-      const response = await mutate(data)
-      if ('data' in response) {
-        localStorage.setItem('token', response.data.token)
-        dispatch(userActions.setUser(response.data.user))
-        navigate('/')
-      }
-      navigate('/')
+      await mutate(data).then(() => {
+        handleSignIn({ email: data.email, password: data.password })
+      })
     } catch (error) {
       console.log('Error sign up', error)
     }

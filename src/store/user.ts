@@ -3,8 +3,8 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 export interface IUser {
   email: string
-  firstName: string
-  lastName: string
+  firstname: string
+  lastname: string
 }
 
 export type UserState = IUser | null

@@ -43,7 +43,14 @@ export interface SignInResponse {
 export const apiSci = createApi({
   reducerPath: 'apiSci',
   baseQuery: fetchBaseQuery({
-    baseUrl: API_URL
+    baseUrl: API_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`)
+      }
+      return headers
+    }
   }),
   endpoints: (build) => ({
     signUp: build.mutation<SignInResponse, SignUpBody>({
@@ -77,8 +84,20 @@ export const apiSci = createApi({
       query: (id) => ({
         url: `/documents/${id}`
       })
+    }),
+    isUniqueDoc: build.query({
+      query: (docHash: string) => ({
+        url: `/documents/is-unique/${docHash}`
+      })
     })
   })
 })
 
-export const { useSignInMutation, useGetDocumentQuery, useSignUpMutation, useSearchQuery, useAddWorkMutation } = apiSci
+export const {
+  useSignInMutation,
+  useGetDocumentQuery,
+  useSignUpMutation,
+  useLazyIsUniqueDocQuery,
+  useSearchQuery,
+  useAddWorkMutation
+} = apiSci

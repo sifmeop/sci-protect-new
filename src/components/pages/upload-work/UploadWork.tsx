@@ -1,4 +1,5 @@
 import { Button, Input } from '@mui/material'
+import { useAppSelector } from 'hooks/redux'
 import { Controller } from 'react-hook-form'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable'
@@ -7,7 +8,17 @@ import { ErrorMessage } from 'ui/AuthForm/ErrorMessage'
 import styles from './UploadWork.module.scss'
 import { useUploadWork } from './useUploadWork'
 
-export const UploadWork = () => {
+export const UploadWorkWrapper = () => {
+  const user = useAppSelector((state) => state.user)
+
+  if (!user) {
+    return <p className='text-center'>Потрібно увійти</p>
+  }
+
+  return <UploadWork />
+}
+
+const UploadWork = () => {
   const { register, handleSubmit, control, errors, onSubmit, file, setFile } = useUploadWork()
 
   return (

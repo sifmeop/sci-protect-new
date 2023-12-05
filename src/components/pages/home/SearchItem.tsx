@@ -20,6 +20,7 @@ export const SearchItem = ({ index, description, id, license_type, price, tags, 
       <div>Ціна: {price}</div>
       <Link
         to={`/work/${id}`}
+        onClick={(e) => e.preventDefault()}
         className='text-white hover:bg-blue-500 transition-colors w-full block p-2 text-center rounded-lg bg-blue-400'>
         Переглянути
       </Link>

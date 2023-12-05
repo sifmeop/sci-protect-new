@@ -10,5 +10,5 @@ export const Work = () => {
 
   console.debug(data, 'data')
 
-  return <div>Work</div>
+  return <div>{id}</div>
 }

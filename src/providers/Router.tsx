@@ -4,7 +4,7 @@ import { HomePage } from 'components/pages/home/HomePage'
 import { NotFoundPage } from 'components/pages/not-found/NotFoundPage'
 import SignInPage from 'components/pages/sign-in/SignInPage'
 import SignUpPage from 'components/pages/sign-up/SignUpPage'
-import { UploadWork } from 'components/pages/upload-work/UploadWork'
+import { UploadWorkWrapper } from 'components/pages/upload-work/UploadWork'
 import { Work } from 'components/pages/work/Work'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'upload-work',
-        element: <UploadWork />
+        element: <UploadWorkWrapper />
       },
       {
         path: 'work/:id',
