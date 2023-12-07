@@ -5,7 +5,7 @@ type Props = IWork & {
   index: number
 }
 
-export const SearchItem = ({ index, description, id, license_type, price, tags, title, user_info }: Props) => {
+export const SearchItem = ({ index, description, hash, license_type, price, tags, title, user_info }: Props) => {
   return (
     <div className='flex flex-col gap-2 border border-gray-300 p-4 rounded-lg'>
       <h1>
@@ -19,8 +19,7 @@ export const SearchItem = ({ index, description, id, license_type, price, tags, 
       <div>Тип ліцензії: {license_type === 'OPEN' ? 'Відкрита' : 'Закрита'}</div>
       <div>Ціна: {price}</div>
       <Link
-        to={`/work/${id}`}
-        onClick={(e) => e.preventDefault()}
+        to={`/work/${hash}`}
         className='text-white hover:bg-blue-500 transition-colors w-full block p-2 text-center rounded-lg bg-blue-400'>
         Переглянути
       </Link>

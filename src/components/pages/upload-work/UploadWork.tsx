@@ -19,7 +19,7 @@ export const UploadWorkWrapper = () => {
 }
 
 const UploadWork = () => {
-  const { register, handleSubmit, control, errors, onSubmit, file, setFile } = useUploadWork()
+  const { register, txId, handleSubmit, control, errors, onSubmit, file, setFile } = useUploadWork()
 
   return (
     <div className='max-w-xl w-full mx-auto'>
@@ -107,6 +107,7 @@ const UploadWork = () => {
           Завантажити
         </Button>
       </form>
+      {txId && <p>Transaction ID: {txId}</p>}
     </div>
   )
 }
